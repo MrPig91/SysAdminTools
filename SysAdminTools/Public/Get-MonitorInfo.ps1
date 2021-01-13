@@ -3,8 +3,7 @@
     This will grab the serial number, monitor name, and year of manufacture of all monitors connected to a computer.
 .DESCRIPTION
     This functions grabs the serial number, monitor name, and year of manufacture of all monitors
-    connected to a computer. If the computername parameter is used the a new cimsession is created
-    and removed using the DCOM protocol. You cannot use the Cimsession and ComputerName parameters together. They belong to different parameter sets.
+    connected to a computer.
 .EXAMPLE
     PS C:\> Get-MonitorInfo
 
@@ -31,7 +30,7 @@
 .OUTPUTS
     PsCustomObject
 .NOTES
-    When using the Cimsession parameter it does not remove the cimsession after the function has ended.
+    Does not grab built-in monitor info.
 #>
 function Get-MonitorInfo{
     [CmdletBinding()]
