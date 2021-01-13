@@ -20,7 +20,7 @@ Add-Content -Path $modulePath -Value "Export-ModuleMember -function $FunctionsTo
 $FunctionsToExport =  $FunctionsToExport.split(", ",[System.StringSplitOptions]::RemoveEmptyEntries)
 
 New-ModuleManifest -Path "$homedirectory\$ManifesetName" -RootModule $ModuleName -ModuleVersion $VersionNumber `
-     -CompanyName "Powershell Crash Course" -FunctionsToExport $FunctionsToExport
-Write-Host "Manifest Path Exists: $(Test-Path -Path $homedirectory\$ManifesetName)"
+     -CompanyName "Powershell Crash Course" -FunctionsToExport $FunctionsToExport -Author "Syrius Cleveland" -
+Write-Host "Manifest Path Exists: $(Test-Path -Path $homedirectory\$ManifesetName)" -Description "A toolbox for System Administrators"
 
-Publish-Module -Path $homedirectory -NuGetApiKey $env:PWSHGALLERY -Tag "Active Directory","Network"
+Publish-Module -Path $homedirectory -NuGetApiKey $env:PWSHGALLERY -Tags "Active Directory","Network"
