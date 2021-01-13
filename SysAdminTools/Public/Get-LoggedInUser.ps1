@@ -3,10 +3,26 @@
     This function gets the current user sesions on a remote or local computer.
 .DESCRIPTION
     This function uses quser.exe to get the current user sessions from a remote or local computer.
+.PARAMETER ComputerName
+    Use this paramter to specify the computer you want to run the command aganist using its name or IPAddress.
+
 .EXAMPLE
     PS C:\> Get-LoggedInUser
 
+    ComputerName    UserName ID SessionType State  ScreenLocked IdleTime
+    ------------    -------- -- ----------- -----  ------------ --------
+    DESKTOP-D7FU4K5 pwsh.cc  1  DirectLogon Active False        0
+
     This examples gets the logged in users of the local computer.
+.EXAMPLE
+    Get-LoggedInUser -ComputerName $env:COMPUTERNAME,dc01v
+
+    ComputerName    UserName      ID SessionType State  ScreenLocked IdleTime
+    ------------    --------      -- ----------- -----  ------------ --------
+    DESKTOP-D7FU4K5 pwsh.cc       1  DirectLogon Active False        0
+    dc01v           administrator 1  DirectLogon Active False        0
+
+    This example gets the currently logged on users for the local computer and a remote computer called dc01v.
 .INPUTS
     System.String
         You can pipe a string that contains the computer name.
@@ -14,7 +30,7 @@
     AdminTools.LoggedInuser
         Outputs a custom powershell object
 .NOTES
-    General notes
+    Requires Admin
 #>
 Function Get-LoggedInUser () {
     [CmdletBinding()]
