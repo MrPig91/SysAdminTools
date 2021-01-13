@@ -47,8 +47,10 @@ Function Get-LoggedInUser () {
                         SessionType = "TBD"
                     }
                 }
+                
                 $LogonUI = Get-WmiObject -Class win32_process -ComputerName $computer -Filter "Name = 'LogonUI.exe'" -Property SessionId,Name,CreationDate |
-                 select name,SessionId,@{n="Time";e={[DateTime]::Now - $_.ConvertToDateTime($_.CreationDate)}}
+                    select name,SessionId,@{n="Time";e={[DateTime]::Now - $_.ConvertToDateTime($_.CreationDate)}}
+
                 foreach ($user in $LoggedOnUsers){
                     if ($LogonUI.SessionId -contains $user.SessionId){
                         $user.LockScreenPresent = $True
@@ -79,8 +81,9 @@ Function Get-LoggedInUser () {
                     }
 
                     $user | Add-Member -Name LogOffUser -Value {logoff $this.SessionId /server:$($this.ComputerName)} -MemberType ScriptMethod
+                    $user | Add-Member -MemberType AliasProperty -Name ScreenLocked -Value LockScreenPresent
+                    $user
                 }
-                $LoggedOnUsers
             } #if online
         } #foreach
     } #process

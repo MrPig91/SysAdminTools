@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+  <ViewDefinitions>
+    <View>
+      <Name>AdminTools.LoggedInUser</Name>
+      <ViewSelectedBy>
+        <TypeName>AdminTools.LoggedInUser</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+            <TableColumnHeader>
+                <Label>ComputerName</Label>
+            </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>UserName</Label>
+            </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>ID</Label>
+            </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>SessionType</Label>
+            </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>State</Label>
+            </TableColumnHeader>            
+            <TableColumnHeader>
+                <Label>ScreenLocked</Label>
+            </TableColumnHeader>
+            <TableColumnHeader>
+                <Label>IdleTime</Label>
+            </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ComputerName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>UserName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>SessionId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>SessionType</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>
+                  $Esc = [char]27
+                  $color = switch ($_.State){
+                      {$_ -eq "Active"} {"92"}
+                      {$_ -eq "Disconnected"} {"91"}
+                  }
+                  "$($Esc)[$($color)m$($_.State)$($Esc)[39m"
+                </ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>LockScreenPresent</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>
+                if ($_.IdleTime -eq 0){
+                  "0"
+                }
+                else{
+                  if ($_.IdleTime.Days -ne 0){
+                    "$($_.IdleTime.Days) Days"
+                  }
+                  elseif ($_.IdleTime.Hours -ne 0){
+                    "$($_.IdleTime.Hours) Hours"
+                  }
+                  else{
+                    "$($_.IdleTime.Minutes) Minutes"
+                  }
+
+                }
+                </ScriptBlock>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+  </ViewDefinitions>
+</Configuration>
