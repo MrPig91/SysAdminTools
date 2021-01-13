@@ -22,7 +22,7 @@ $FunctionsToExport =  $FunctionsToExport.split(", ",[System.StringSplitOptions]:
 $formatsFolderPath = Join-Path -Path $env:GITHUB_WORKSPACE -ChildPath "$moduleName\Formats"
 $formatfiles = (Get-ChildItem -Path $formatsFolderPath).Name | foreach {".\Formats\$_"}
 
-New-ModuleManifest -Path "$homedirectory\$ManifesetName" -RootModule $ModuleName -ModuleVersion $VersionNumber -Tags "Acitve Directory","Network" -FormatsToProcess $formatfiles `
+New-ModuleManifest -Path "$homedirectory\$ManifesetName" -RootModule $ModuleName -ModuleVersion $VersionNumber -FormatsToProcess $formatfiles `
      -CompanyName "Powershell Crash Course" -FunctionsToExport $FunctionsToExport -Author "Syrius Cleveland" -Description "A toolbox for System Administrators"
 Write-Host "Manifest Path Exists: $(Test-Path -Path $homedirectory\$ManifesetName)"
 
