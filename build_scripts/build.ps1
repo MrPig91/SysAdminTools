@@ -19,8 +19,11 @@ Add-Content -Path $modulePath -Value "Export-ModuleMember -function $FunctionsTo
 
 $FunctionsToExport =  $FunctionsToExport.split(", ",[System.StringSplitOptions]::RemoveEmptyEntries)
 
-New-ModuleManifest -Path "$homedirectory\$ManifesetName" -RootModule $ModuleName -ModuleVersion $VersionNumber `
-     -CompanyName "Powershell Crash Course" -FunctionsToExport $FunctionsToExport -Author "Syrius Cleveland" -Description "A toolbox for System Administrators"
-Write-Host "Manifest Path Exists: $(Test-Path -Path $homedirectory\$ManifesetName)" 
+$formatsFolderPath = Join-Path -Path $env:GITHUB_WORKSPACE -ChildPath "$moduleName\Formats"
+$formatfiles = (Get-ChildItem -Path $formatsFolderPath).Name | foreach {".\Formats\$_"}
 
-Publish-Module -Path $homedirectory -NuGetApiKey $env:PWSHGALLERY -Tags "Active Directory","Network"
+New-ModuleManifest -Path "$homedirectory\$ManifesetName" -RootModule $ModuleName -ModuleVersion $VersionNumber -Tags "Acitve Directory","Network" -FormatsToProcess $formatfiles `
+     -CompanyName "Powershell Crash Course" -FunctionsToExport $FunctionsToExport -Author "Syrius Cleveland" -Description "A toolbox for System Administrators"
+Write-Host "Manifest Path Exists: $(Test-Path -Path $homedirectory\$ManifesetName)"
+
+Publish-Module -Path $homedirectory -NuGetApiKey $env:PWSHGALLERY -Repository "Active Directory","Network"
