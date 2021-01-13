@@ -14,6 +14,4 @@ jobs:
         NUGET_KEY: ${{ secrets.PWSHGALLERY }}
       shell: pwsh
       run: |
-        (Get-Location).Path
-        Write-host $env:GITHUB_WORKSPACE
-        Write-Host $env:GITHUB_RUN_NUMBER
+        .\build_scripts\build.ps1
