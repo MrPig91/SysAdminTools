@@ -26,4 +26,4 @@ New-ModuleManifest -Path "$homedirectory\$ManifesetName" -RootModule $ModuleName
      -CompanyName "Powershell Crash Course" -FunctionsToExport $FunctionsToExport -Author "Syrius Cleveland" -Description "A toolbox for System Administrators"
 Write-Host "Manifest Path Exists: $(Test-Path -Path $homedirectory\$ManifesetName)"
 
-Publish-Module -Path $homedirectory -NuGetApiKey $env:PWSHGALLERY -Repository "Active Directory","Network"
+Publish-Module -Path $homedirectory -NuGetApiKey $env:PWSHGALLERY -Tags "Active Directory","Network"
