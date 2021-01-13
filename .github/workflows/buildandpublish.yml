@@ -14,5 +14,6 @@ jobs:
         NUGET_KEY: ${{ secrets.PWSHGALLERY }}
       shell: pwsh
       run: |
-        ./build.ps1 -Path /tmp/samplemodule
-        Publish-Module -Path /tmp/samplemodule -NuGetApiKey $env:PWSHGALLERY -Verbose
+        Get-Location
+        Write-host $GITHUB_WORKSPACE
+        Write-Host $GITHUB_RUN_NUMBER
