@@ -48,16 +48,16 @@ Function Get-LoggedInUser () {
                     Continue
                 }
 
-                $LoggedOnUsers = foreach ($u in $Users){
+                $LoggedOnUsers = foreach ($user in $users){
                     [PSCustomObject]@{
                         PSTypeName = "AdminTools.LoggedInUser"
                         ComputerName = $computer
-                        UserName = (-join $u[1 .. 20]).Trim()
-                        SessionName = (-join $u[23 .. 37]).Trim()
-                        SessionId = [int](-join $u[38 .. 44])
-                        State = (-join $u[46 .. 53]).Trim()
-                        IdleTime = (-join $u[54 .. 63]).Trim()
-                        LogonTime = [datetime](-join $u[65 .. ($u.Length - 1)])
+                        UserName = (-join $user[1 .. 20]).Trim()
+                        SessionName = (-join $user[23 .. 37]).Trim()
+                        SessionId = [int](-join $user[38 .. 44])
+                        State = (-join $user[46 .. 53]).Trim()
+                        IdleTime = (-join $user[54 .. 63]).Trim()
+                        LogonTime = [datetime](-join $user[65 .. ($user.Length - 1)])
                         LockScreenPresent = $false
                         LockScreenTimer = (New-TimeSpan)
                         SessionType = "TBD"
