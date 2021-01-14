@@ -42,10 +42,19 @@ Function Get-LoggedInUser () {
 
     PROCESS{
         foreach ($computer in $ComputerName){
-            if (Test-Connection -ComputerName $computer -Count 1 -Quiet){
-                $Users = (cmd /c quser.exe /server:$computer "2>NUL" | select -Skip 1)
-                if (!$users){
-                    Continue
+            try{
+                Write-Information "Testing connection to $computer"
+                Test-Connection -ComputerName $computer -Count 1 -ErrorAction Stop | Out-Null
+                $Users = quser.exe /server:$computer 2>$null | select -Skip 1
+
+                if (!$?){
+                    Write-Information "Error with quser.exe"
+                    if ($Error[0].Exception.Message -eq ""){
+                        throw $Error[1]
+                    }
+                    else{
+                        throw $Error[0]
+                    }
                 }
 
                 $LoggedOnUsers = foreach ($user in $users){
@@ -63,9 +72,14 @@ Function Get-LoggedInUser () {
                         SessionType = "TBD"
                     }
                 }
-                
-                $LogonUI = Get-WmiObject -Class win32_process -ComputerName $computer -Filter "Name = 'LogonUI.exe'" -Property SessionId,Name,CreationDate |
+                try {
+                    $LogonUI = Get-CimInstance -ClassName win32_process -Filter "Name = 'LogonUI.exe'" -ComputerName $Computer -Property SessionId,Name,CreationDate -OperationTimeoutSec 1 -ErrorAction Stop
+                }
+                catch{
+                    Write-Information "WinRM is not configured for $computer, using Dcom and WMI"
+                    $LogonUI = Get-WmiObject -Class win32_process -ComputerName $computer -Filter "Name = 'LogonUI.exe'" -Property SessionId,Name,CreationDate -ErrorAction Stop |
                     select name,SessionId,@{n="Time";e={[DateTime]::Now - $_.ConvertToDateTime($_.CreationDate)}}
+                }
 
                 foreach ($user in $LoggedOnUsers){
                     if ($LogonUI.SessionId -contains $user.SessionId){
@@ -100,7 +114,24 @@ Function Get-LoggedInUser () {
                     $user | Add-Member -MemberType AliasProperty -Name ScreenLocked -Value LockScreenPresent
                     $user
                 }
-            } #if online
+            } #try
+            catch [System.Management.Automation.RemoteException]{
+                if ($_.Exception.Message -like "No User exists for *"){
+                    Write-Warning "No users logged into $computer"
+                }
+                elseif ($_.Exception.Message -like "*The RPC server is unavailable*"){
+                    Write-Warning "quser.exe failed on $comptuer, Ensure 'Netlogon Service (NP-In)' firewall rule is enabled"
+                    $_
+                }
+            }
+            catch [System.Runtime.InteropServices.COMException]{
+                Write-Warning "WMI query failed on $computer. Ensure 'Windows Management Instrumentation (WMI-In)' firewall rule is enabled."
+                $_
+            }
+            catch{
+                Write-Information "Unexpected error occurred with $computer"
+                $_
+            }
         } #foreach
     } #process
 }
