@@ -22,8 +22,20 @@ $FunctionsToExport =  $FunctionsToExport.split(", ",[System.StringSplitOptions]:
 $formatsFolderPath = Join-Path -Path $env:GITHUB_WORKSPACE -ChildPath "$moduleName\Formats"
 $formatfiles = (Get-ChildItem -Path $formatsFolderPath).Name | foreach {".\Formats\$_"}
 
-New-ModuleManifest -Path "$homedirectory\$ManifesetName" -RootModule $ModuleName -ModuleVersion $VersionNumber -FormatsToProcess $formatfiles `
-     -CompanyName "Powershell Crash Course" -FunctionsToExport $FunctionsToExport -Author "Syrius Cleveland" -Description "A toolbox for System Administrators"
+$manifestParameters = @{
+     Path = "$homedirectory\$ManifesetName"
+     RootModule = $ModuleName
+     ModuleVersion = $VersionNumber
+     FormatsToProcess = $formatfiles
+     FunctionsToExport = $FunctionsToExport
+     Author = "Syrius Cleveland"
+     CompanyName = "Powershell Crash Course"
+     Description = "A toolbox for System Administrators"
+     RequiredAssemblies = 'System.DirectoryServices.AccountManagement.dll'
+}
+
+New-ModuleManifest @manifestParameters
+
 Write-Host "Manifest Path Exists: $(Test-Path -Path $homedirectory\$ManifesetName)"
 
 Publish-Module -Path $homedirectory -NuGetApiKey $env:PWSHGALLERY -Tags "Active Directory","Network"
