@@ -1,0 +1,60 @@
+<#
+.SYNOPSIS
+    Verifies that a given credential is valid or invalid.
+.DESCRIPTION
+    Will test a given username with a given password and return either true or false.
+    True if the credentials provided are valid and false if they are not.
+.EXAMPLE
+    PS C:\> Test-Credential -Credential "MrPig"
+    True
+
+    This example shows you can enter in just a username and it will prompt for the password, it return "True" which indicates that the credentials are valid.
+.EXAMPLE
+    PS C:\> Test-Credential
+    cmdlet Test-Credential at command pipeline position 1
+    Supply values for the following parameters:
+    Credential
+    False
+
+    If you do not enter in any parameters it will prompt for Credentials.
+    Since credentials enter in this example were not valid it return a false boolean value.
+.INPUTS
+    None
+.OUTPUTS
+    Boolean
+.NOTES
+    Requires secure string for password. I made the Output just a simple boolean value since the rest of the cmdlets that have test as the verb do the same.
+#>
+function Test-Credential{
+    [Cmdletbinding()]
+    [OutputType([bool])]
+    param(
+        [Parameter(Mandatory,ValueFromPipeline)]
+        [pscredential]$Credential
+    )
+
+    Begin{
+        Write-Information "Adding System.DirectoryServices.AccountManagement assembly" -Tags "Begin"
+        Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+    }
+
+    Process{
+        Write-Information "Checking to see if computer is part of a domain using Get-CimInstance" -Tags "Process"
+        $PartofDomain = (Get-CimInstance -ClassName Win32_ComputerSystem).PartOfDomain
+
+        if ($PartofDomain){
+            $ContextType = [System.DirectoryServices.AccountManagement.ContextType]::Domain
+        }
+        else{
+            $ContextType = [System.DirectoryServices.AccountManagement.ContextType]::Machine
+        }
+        
+        $PrincipalContext = [System.DirectoryServices.AccountManagement.PrincipalContext]::new($ContextType)
+
+        Write-Information "Validating Credentials" -Tags "Process"
+        $ValidatedCreds = $PrincipalContext.ValidateCredentials($Credential.UserName,$Credential.GetNetworkCredential().Password)
+        Write-Information "Username $($Credential.UserName) with provided password resulted in: $ValidatedCreds" -Tags "Process"
+
+        return $ValidatedCreds
+    } #Process
+}
