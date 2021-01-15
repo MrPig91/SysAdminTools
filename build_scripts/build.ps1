@@ -31,7 +31,7 @@ $manifestParameters = @{
      Author = "Syrius Cleveland"
      CompanyName = "Powershell Crash Course"
      Description = "A toolbox for System Administrators"
-     RequiredAssemblies = 'System.DirectoryServices.AccountManagement.dll'
+     RequiredAssemblies = System.DirectoryServices.AccountManagement.dll
 }
 
 New-ModuleManifest @manifestParameters
