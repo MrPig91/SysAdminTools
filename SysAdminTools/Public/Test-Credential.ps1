@@ -61,6 +61,13 @@ function Test-Credential{
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
         Write-Information "Checking to see if computer is part of a domain using Get-CimInstance" -Tags "Process"
         $PartofDomain = (Get-CimInstance -ClassName Win32_ComputerSystem).PartOfDomain
+
+        if ($PartofDomain){
+            $ContextType = [System.DirectoryServices.AccountManagement.ContextType]::Domain
+        }
+        else{
+            $ContextType = [System.DirectoryServices.AccountManagement.ContextType]::Machine
+        }
     }
 
     Process{
@@ -82,12 +89,9 @@ function Test-Credential{
                     return $Admin
                 }
             }
-    
-            if ($PartofDomain){
-                $ContextType = [System.DirectoryServices.AccountManagement.ContextType]::Domain
-            }
-            else{
-                $ContextType = [System.DirectoryServices.AccountManagement.ContextType]::Machine
+
+            if ($PSCmdlet.ParameterSetName -eq "UserNameAndPassword"){
+                $Credential = [System.Management.Automation.PSCredential]::new($UserName,$Password)
             }
             
             $PrincipalContext = [System.DirectoryServices.AccountManagement.PrincipalContext]::new($ContextType)
