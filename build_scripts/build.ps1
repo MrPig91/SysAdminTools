@@ -1,4 +1,4 @@
-$VersionNumber = "1.0.$env:GITHUB_RUN_NUMBER"
+$VersionNumber = "1.1.$env:GITHUB_RUN_NUMBER"
 $moduleName = 'SysAdminTools'
 $homedirectory = Join-Path -Path $env:GITHUB_WORKSPACE -ChildPath "SysAdminTools"
 
