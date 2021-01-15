@@ -40,79 +40,92 @@ Function Get-LoggedInUser () {
         [string[]]$ComputerName = $ENV:ComputerName
     )
 
-    PROCESS{
+    PROCESS {
         foreach ($computer in $ComputerName){
             try{
-                Write-Information "Testing connection to $computer"
-                Test-Connection -ComputerName $computer -Count 1 -ErrorAction Stop | Out-Null
-                $Users = quser.exe /server:$computer 2>$null | select -Skip 1
+                Write-Information "Testing connection to $computer" -Tags 'Process'
+                if (Test-Connection -ComputerName $computer -Count 1 -Quiet){
+                    $Users = quser.exe /server:$computer 2>$null | select -Skip 1
 
-                if (!$?){
-                    Write-Information "Error with quser.exe"
-                    if ($Error[0].Exception.Message -eq ""){
-                        throw $Error[1]
-                    }
-                    else{
-                        throw $Error[0]
-                    }
-                }
-
-                $LoggedOnUsers = foreach ($user in $users){
-                    [PSCustomObject]@{
-                        PSTypeName = "AdminTools.LoggedInUser"
-                        ComputerName = $computer
-                        UserName = (-join $user[1 .. 20]).Trim()
-                        SessionName = (-join $user[23 .. 37]).Trim()
-                        SessionId = [int](-join $user[38 .. 44])
-                        State = (-join $user[46 .. 53]).Trim()
-                        IdleTime = (-join $user[54 .. 63]).Trim()
-                        LogonTime = [datetime](-join $user[65 .. ($user.Length - 1)])
-                        LockScreenPresent = $false
-                        LockScreenTimer = (New-TimeSpan)
-                        SessionType = "TBD"
-                    }
-                }
-                try {
-                    $LogonUI = Get-CimInstance -ClassName win32_process -Filter "Name = 'LogonUI.exe'" -ComputerName $Computer -Property SessionId,Name,CreationDate -OperationTimeoutSec 1 -ErrorAction Stop
-                }
-                catch{
-                    Write-Information "WinRM is not configured for $computer, using Dcom and WMI"
-                    $LogonUI = Get-WmiObject -Class win32_process -ComputerName $computer -Filter "Name = 'LogonUI.exe'" -Property SessionId,Name,CreationDate -ErrorAction Stop |
-                    select name,SessionId,@{n="Time";e={[DateTime]::Now - $_.ConvertToDateTime($_.CreationDate)}}
-                }
-
-                foreach ($user in $LoggedOnUsers){
-                    if ($LogonUI.SessionId -contains $user.SessionId){
-                        $user.LockScreenPresent = $True
-                        $user.LockScreenTimer = ($LogonUI | where SessionId -eq $user.SessionId).Time
-                    }
-                    if ($user.State -eq "Disc"){
-                        $user.State = "Disconnected"
-                    }
-                    $user.SessionType = switch -wildcard ($user.SessionName){
-                        "Console" {"DirectLogon"; Break}
-                        "" {"Unkown"; Break}
-                        "rdp*" {"RDP"; Break}
-                        default {""}
-                    }
-                    if ($user.IdleTime -ne "None" -and $user.IdleTime -ne "."){
-                        if ($user.IdleTime -Like "*+*"){
-                            $user.IdleTime = New-TimeSpan -Days $user.IdleTime.Split('+')[0] -Hours $user.IdleTime.Split('+')[1].split(":")[0] -Minutes $user.IdleTime.Split('+')[1].split(":")[1]
-                        }
-                        elseif($user.IdleTime -like "*:*"){
-                            $user.idleTime = New-TimeSpan -Hours $user.IdleTime.Split(":")[0] -Minutes $user.IdleTime.Split(":")[1]
+                    if (!$?){
+                        Write-Information "Error with quser.exe" -Tags 'Process'
+                        if ($Error[0].Exception.Message -eq ""){
+                            throw $Error[1]
                         }
                         else{
-                            $user.idleTime = New-TimeSpan -Minutes $user.IdleTime
+                            throw $Error[0]
                         }
                     }
-                    else{
-                        $user.idleTime = New-TimeSpan
+    
+                    $LoggedOnUsers = foreach ($user in $users){
+                        [PSCustomObject]@{
+                            PSTypeName = "AdminTools.LoggedInUser"
+                            ComputerName = $computer
+                            UserName = (-join $user[1 .. 20]).Trim()
+                            SessionName = (-join $user[23 .. 37]).Trim()
+                            SessionId = [int](-join $user[38 .. 44])
+                            State = (-join $user[46 .. 53]).Trim()
+                            IdleTime = (-join $user[54 .. 63]).Trim()
+                            LogonTime = [datetime](-join $user[65 .. ($user.Length - 1)])
+                            LockScreenPresent = $false
+                            LockScreenTimer = (New-TimeSpan)
+                            SessionType = "TBD"
+                        }
                     }
+                    try {
+                        Write-Information "Using WinRM and CIM to grab LogonUI process" -Tags 'Process'
+                        $LogonUI = Get-CimInstance -ClassName win32_process -Filter "Name = 'LogonUI.exe'" -ComputerName $Computer -Property SessionId,Name,CreationDate -OperationTimeoutSec 1 -ErrorAction Stop
+                    }
+                    catch{
+                        Write-Information "WinRM is not configured for $computer, using Dcom and WMI to grab LogonUI process" -Tags 'Process'
+                        $LogonUI = Get-WmiObject -Class win32_process -ComputerName $computer -Filter "Name = 'LogonUI.exe'" -Property SessionId,Name,CreationDate -ErrorAction Stop |
+                        select name,SessionId,@{n="Time";e={[DateTime]::Now - $_.ConvertToDateTime($_.CreationDate)}}
+                    }
+    
+                    foreach ($user in $LoggedOnUsers){
+                        if ($LogonUI.SessionId -contains $user.SessionId){
+                            $user.LockScreenPresent = $True
+                            $user.LockScreenTimer = ($LogonUI | where SessionId -eq $user.SessionId).Time
+                        }
+                        if ($user.State -eq "Disc"){
+                            $user.State = "Disconnected"
+                        }
+                        $user.SessionType = switch -wildcard ($user.SessionName){
+                            "Console" {"DirectLogon"; Break}
+                            "" {"Unkown"; Break}
+                            "rdp*" {"RDP"; Break}
+                            default {""}
+                        }
+                        if ($user.IdleTime -ne "None" -and $user.IdleTime -ne "."){
+                            if ($user.IdleTime -Like "*+*"){
+                                $user.IdleTime = New-TimeSpan -Days $user.IdleTime.Split('+')[0] -Hours $user.IdleTime.Split('+')[1].split(":")[0] -Minutes $user.IdleTime.Split('+')[1].split(":")[1]
+                            }
+                            elseif($user.IdleTime -like "*:*"){
+                                $user.idleTime = New-TimeSpan -Hours $user.IdleTime.Split(":")[0] -Minutes $user.IdleTime.Split(":")[1]
+                            }
+                            else{
+                                $user.idleTime = New-TimeSpan -Minutes $user.IdleTime
+                            }
+                        }
+                        else{
+                            $user.idleTime = New-TimeSpan
+                        }
+    
+                        $user | Add-Member -Name LogOffUser -Value {logoff $this.SessionId /server:$($this.ComputerName)} -MemberType ScriptMethod
+                        $user | Add-Member -MemberType AliasProperty -Name ScreenLocked -Value LockScreenPresent
 
-                    $user | Add-Member -Name LogOffUser -Value {logoff $this.SessionId /server:$($this.ComputerName)} -MemberType ScriptMethod
-                    $user | Add-Member -MemberType AliasProperty -Name ScreenLocked -Value LockScreenPresent
-                    $user
+                        Write-Information "Outputting user object $($user.UserName)" -Tags 'Process'
+                        return $user
+                    } #foreach
+                } #if ping
+                else{
+                    $ErrorRecord = [System.Management.Automation.ErrorRecord]::new(
+                        [System.Net.NetworkInformation.PingException]::new("$computer is unreachable"),
+                        'TestConnectionException',
+                        [System.Management.Automation.ErrorCategory]::ConnectionError,
+                        $computer
+                    )
+                    throw $ErrorRecord
                 }
             } #try
             catch [System.Management.Automation.RemoteException]{
@@ -121,16 +134,16 @@ Function Get-LoggedInUser () {
                 }
                 elseif ($_.Exception.Message -like "*The RPC server is unavailable*"){
                     Write-Warning "quser.exe failed on $comptuer, Ensure 'Netlogon Service (NP-In)' firewall rule is enabled"
-                    $_
+                    $PSCmdlet.WriteError($_)
                 }
             }
             catch [System.Runtime.InteropServices.COMException]{
                 Write-Warning "WMI query failed on $computer. Ensure 'Windows Management Instrumentation (WMI-In)' firewall rule is enabled."
-                $_
+                $PSCmdlet.WriteError($_)
             }
             catch{
                 Write-Information "Unexpected error occurred with $computer"
-                $_
+                $PSCmdlet.WriteError($_)
             }
         } #foreach
     } #process
