@@ -2,8 +2,18 @@
 .SYNOPSIS
     This function will set the Powershell prompt with some predefined functions like the CPU/Mem, Random Command, etc.
 .DESCRIPTION
-    This function uses the "function Prompt {}" function to set the powershell prompt with a new function. You can add a prefix to your main prompt display,
-    change the color of the foreground or background.
+    This function uses the "function Prompt {}" function to set the powershell prompt with a new function. You can add a prefix to your main
+     prompt display, change the color of the foreground or background. Save this command to your powershell profile to have your custom prompt ready to go every time you open up powershell.
+.PARAMETER Name
+    This paramter sets the prompt to a predefined funtion like showing the last commands execution time or a random fact.
+.PARAMETER Prefix
+    This paramter prefixes the prompt with a prefined function that is enclosed with [] and can be added together. The order you place them when you run the command is the order they will appear on the prompt.
+.PARAMETER ForegroundColor
+    This is the color the foreground text will be.  You can set this color by calling $prompt_FGColor at anytime after calling the function for the first time.
+.PARAMETER BackgroundColor
+    This is the color that the background text will be. You can set this color by calling $prompt_BGColor at anytime after calling the function for the first time.
+.PARAMETER Scriptblock
+    This paramter allows you to set your custom scriptblock to run every time the prompt function is called.
 .EXAMPLE
     PS C:\> Set-Prompt -Name CPU_Memory -Prefix Admin -ForegroundColor Red -BackGroundColor Blue
     [Non-Admin]CPU: 100% | Mem: 37%:\>
@@ -18,6 +28,11 @@
     This example sets the prompt to show the amount of time it took the last command to run and displays the number of errors as a prefix. Here you can see
     that filtering with the Filter paramter of Get-CimInstance is faster than filtering on the left. Always filter left when possible. This particular prompt is useful
     when creating new functions and trying to optmize them.
+.EXAMPLE
+    PS C:\>Set-Prompt -ScriptBlock {"$((Get-NetIPAddress -AddressState Preferred -AddressFamily IPv4 -PrefixOrigin Dhcp).IPAddress):\>"}
+    10.0.0.63:\>
+
+    This example show you how to set your own prompt funtion by making the prompt your current IP Address of your prefferred DHCP connection.
 .INPUTS
     None
 .OUTPUTS
@@ -28,18 +43,22 @@
     so that the prompt function can read them. 
 #>
 function Set-Prompt{
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Name")]
     param(
-        [Parameter()]
+        [Parameter(ParameterSetName = "Name")]
         [ValidateSet("Random_Cmdlet","Time-short","Time-long","Date-Time","Random_Fact","Measure_Command","CPU_Memory","System_Uptime")]
         [string]$Name,
 
+        [Parameter(ParameterSetName = "Name")]
         [ValidateSet("Admin","Time","Error_Count","Debug")]
         [string[]]$Prefix,
 
         [ConsoleColor]$ForegroundColor = $host.UI.RawUI.ForegroundColor,
 
-        [ConsoleColor]$BackGroundColor = $host.UI.RawUI.BackgroundColor
+        [ConsoleColor]$BackGroundColor = $host.UI.RawUI.BackgroundColor,
+
+        [Parameter(ParameterSetName = "Custom",Mandatory)]
+        [scriptblock]$ScriptBlock
     )
 
     New-Variable -Name prompt_FGColor -Value $ForegroundColor -Scope Global -Force
@@ -77,6 +96,11 @@ function Set-Prompt{
                 if (Test-Path variable:/PSDebugContext) {'[DBG]'}
             }}
         }
+    }
+
+    if ($PSBoundParameters.ContainsKey("Scriptblock")){
+        New-Item -Path function:prompt -Value $ScriptBlock -Force | Out-Null
+        return
     }
 
     switch ($Name) {
@@ -124,7 +148,7 @@ function Set-Prompt{
                     Write-Host "$(($Prompt_Prefixblock | foreach {&$_}) -join '')$([math]::round($timespan.TotalSeconds,2)) seconds:\>" -ForegroundColor $prompt_FGColor -BackgroundColor $prompt_BGColor -NoNewline
                     return " "
                 }
-                Write-Host "$(($Prompt_Prefixblock | foreach {&$_}) -join '')$([math]::round($timespan.TotalMinutes,2)) minutes:\>"
+                Write-Host "$(($Prompt_Prefixblock | foreach {&$_}) -join '')$([math]::round($timespan.TotalMinutes,2)) minutes:\>" -ForegroundColor $prompt_FGColor -BackgroundColor $prompt_BGColor -NoNewline
                 return " "
             }
         }
