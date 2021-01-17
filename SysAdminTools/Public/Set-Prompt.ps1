@@ -3,7 +3,7 @@
     This function will set the Powershell prompt with some predefined functions like the CPU/Mem, Random Command, etc.
 .DESCRIPTION
     This function uses the "function Prompt {}" function to set the powershell prompt with a new function. You can add a prefix to your main
-     prompt display, change the color of the foreground or background.
+     prompt display, change the color of the foreground or background. Save this command to your powershell profile to have your custom prompt ready to go every time you open up powershell.
 .PARAMETER Name
     This paramter sets the prompt to a predefined funtion like showing the last commands execution time or a random fact.
 .PARAMETER Prefix
@@ -148,7 +148,7 @@ function Set-Prompt{
                     Write-Host "$(($Prompt_Prefixblock | foreach {&$_}) -join '')$([math]::round($timespan.TotalSeconds,2)) seconds:\>" -ForegroundColor $prompt_FGColor -BackgroundColor $prompt_BGColor -NoNewline
                     return " "
                 }
-                Write-Host "$(($Prompt_Prefixblock | foreach {&$_}) -join '')$([math]::round($timespan.TotalMinutes,2)) minutes:\>"
+                Write-Host "$(($Prompt_Prefixblock | foreach {&$_}) -join '')$([math]::round($timespan.TotalMinutes,2)) minutes:\>" -ForegroundColor $prompt_FGColor -BackgroundColor $prompt_BGColor -NoNewline
                 return " "
             }
         }
