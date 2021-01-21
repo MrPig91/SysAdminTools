@@ -1,3 +1,4 @@
+Import-Module CimCmdlets
 Add-Type @"
 public enum ShutdownType {
     LogOff = 0,
