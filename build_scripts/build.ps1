@@ -1,4 +1,3 @@
-Add-Type -Path $env:GITHUB_WORKSPACE\System.DirectoryServices.AccountManagement.dll
 $VersionNumber = "1.1.$env:GITHUB_RUN_NUMBER"
 $moduleName = 'SysAdminTools'
 $homedirectory = Join-Path -Path $env:GITHUB_WORKSPACE -ChildPath "SysAdminTools"
@@ -37,7 +36,6 @@ $manifestParameters = @{
      Author = "Syrius Cleveland"
      CompanyName = "Powershell Crash Course"
      Description = "A toolbox for System Administrators"
-     RequiredAssemblies = System.DirectoryServices.AccountManagement.dll
 }
 
 New-ModuleManifest @manifestParameters
