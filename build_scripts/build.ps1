@@ -17,6 +17,9 @@ $FunctionsToExport = (Get-ChildItem -Path $publicFuncFolderPath | select -Expand
 Add-Content -Path $modulePath -Value $PublicFunctions
 Add-Content -Path $modulePath -Value "Export-ModuleMember -function $FunctionsToExport"
 
+$scriptsToProcess = Join-Path -Path $env:GITHUB_WORKSPACE -ChildPath "$moduleName\ScriptsToProcess"
+$scriptFiles =  (Get-ChildItem -Path $scriptsToProcess).Name | foreach {".\ScriptsToProcess\$_"}
+
 $FunctionsToExport =  $FunctionsToExport.split(", ",[System.StringSplitOptions]::RemoveEmptyEntries)
 
 $formatsFolderPath = Join-Path -Path $env:GITHUB_WORKSPACE -ChildPath "$moduleName\Formats"
@@ -27,7 +30,9 @@ $manifestParameters = @{
      RootModule = $ModuleName
      ModuleVersion = $VersionNumber
      FormatsToProcess = $formatfiles
+     ScriptsToProcess = $scriptFiles
      FunctionsToExport = $FunctionsToExport
+     RequiredModules = "CimCmdlets"
      Author = "Syrius Cleveland"
      CompanyName = "Powershell Crash Course"
      Description = "A toolbox for System Administrators"
