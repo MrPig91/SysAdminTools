@@ -24,4 +24,5 @@ jobs:
         PWSHGALLERY: ${{ secrets.PWSHGALLERY }}
       shell: pwsh
       run: |
+        Add-type -AssemblyName System.DirectoryServices.AccountManagement
         .\build_scripts\build.ps1
