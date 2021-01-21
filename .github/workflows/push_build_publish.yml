@@ -24,5 +24,4 @@ jobs:
         PWSHGALLERY: ${{ secrets.PWSHGALLERY }}
       shell: pwsh
       run: |
-        Add-Type -Path .\System.DirectoryServices.AccountManagement.dll
         .\build_scripts\build.ps1
