@@ -16,7 +16,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   publish-to-gallery:
-    runs-on: Windows Server 2016
+    runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
     - name: Build and publish
@@ -24,4 +24,5 @@ jobs:
         PWSHGALLERY: ${{ secrets.PWSHGALLERY }}
       shell: pwsh
       run: |
+        Add-Type -Path .\System.DirectoryServices.AccountManagement.dll
         .\build_scripts\build.ps1
