@@ -32,6 +32,7 @@ $manifestParameters = @{
      FormatsToProcess = $formatfiles
      ScriptsToProcess = $scriptFiles
      FunctionsToExport = $FunctionsToExport
+     RequiredModules = "CimCmdlets"
      Author = "Syrius Cleveland"
      CompanyName = "Powershell Crash Course"
      Description = "A toolbox for System Administrators"
