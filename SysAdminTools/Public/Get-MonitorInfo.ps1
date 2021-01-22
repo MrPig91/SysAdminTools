@@ -41,7 +41,7 @@ function Get-MonitorInfo{
         [string[]]$ComputerName = $Env:COMPUTERNAME,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimCmdlets.ProtocolType]$Protocol = [Microsoft.Management.Infrastructure.CimCmdlets.ProtocolType]::Dcom
+        [Microsoft.Management.Infrastructure.CimCmdlets.ProtocolType]$Protocol = [Microsoft.Management.Infrastructure.CimCmdlets.ProtocolType]::Wsman
     )
 
     Begin{
@@ -62,6 +62,7 @@ function Get-MonitorInfo{
                     $MonitorName = ($monitor.UserFriendlyName -ne 0 | ForEach-Object{[char]$_}) -join ""
 
                     $Object = [PSCustomObject]@{
+                        PSTypeName = "SysAdminTools.Monitor"
                         ComputerName = $computer.ToUpper()
                         MonitorName = $MonitorName
                         SerialNumber = $SerialNumber
