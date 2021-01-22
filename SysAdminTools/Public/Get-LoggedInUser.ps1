@@ -115,7 +115,7 @@ Function Get-LoggedInUser () {
                         $user | Add-Member -MemberType AliasProperty -Name ScreenLocked -Value LockScreenPresent
 
                         Write-Information "Outputting user object $($user.UserName)" -Tags 'Process'
-                        return $user
+                        $user
                     } #foreach
                 } #if ping
                 else{
@@ -125,7 +125,7 @@ Function Get-LoggedInUser () {
                         [System.Management.Automation.ErrorCategory]::ConnectionError,
                         $computer
                     )
-                    throw $ErrorRecord
+                    $PSCmdlet.WriteError($ErrorRecord)
                 }
             } #try
             catch [System.Management.Automation.RemoteException]{
