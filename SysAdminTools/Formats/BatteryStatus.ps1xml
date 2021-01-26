@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+  <ViewDefinitions>
+    <View>
+        <Name>SysAdminTools.BatteryStatus</Name>
+        <ViewSelectedBy>
+            <TypeName>SysAdminTools.BatteryStatus</TypeName>
+        </ViewSelectedBy>
+        <TableControl>
+            <TableHeaders>
+                <TableColumnHeader>
+                    <Label>ComputerName</Label>
+                </TableColumnHeader>
+                <TableColumnHeader>
+                    <Label>Name</Label>
+                </TableColumnHeader>
+                <TableColumnHeader>
+                    <Label>Charge (%)</Label>
+                </TableColumnHeader>
+                <TableColumnHeader>
+                    <Label>Run Time</Label>
+                </TableColumnHeader>
+                <TableColumnHeader>
+                    <Label>Battery Status</Label>
+                </TableColumnHeader>            
+                <TableColumnHeader>
+                    <Label>Status</Label>
+                </TableColumnHeader>
+            </TableHeaders>
+            <TableRowEntries>
+            <TableRowEntry>
+                <TableColumnItems>
+                <TableColumnItem>
+                    <PropertyName>ComputerName</PropertyName>
+                </TableColumnItem>
+                <TableColumnItem>
+                    <ScriptBlock>
+                    if ($_.Name.Contains(" ")){
+                        $_.Name.Split(' ')[0]
+                    }
+                    else{
+                        $_.Name
+                    }
+                    </ScriptBlock>
+                </TableColumnItem>
+                <TableColumnItem>
+                    <Scriptblock>
+                        Add-Type -AssemblyName System.Drawing
+                        $Esc = [char]27
+                        $color = switch ($_.EstimatedChargeRemaining){
+                            {$_ -gt 90} {"42"}
+                            {$_ -le 50} {"101"}
+                            default {"103"}
+                        }
+                        $foreground = [System.Drawing.Color]::($host.UI.RawUI.BackgroundColor)
+                        $r = $foreground.R
+                        $g = $foreground.g
+                        $b = $foreground.b
+                        $percentBar = "$([char]32)"*([math]::Round($_.EstimatedChargeRemaining / 5))
+                        $emptySpace = "$([char]32)"*(20 - [math]::Round($_.EstimatedChargeRemaining / 5))
+                        "[$($Esc)[38;2;$r;$g;$b;$($color);4m$percentBar$($Esc)[39;49;24m$($emptySpace)$($Esc)[49m] $($Esc)[$($color - 10)m$($_.EstimatedChargeRemaining)%$($Esc)[39m"
+                    </Scriptblock>
+                </TableColumnItem>
+                <TableColumnItem>
+                    <PropertyName>EstimatedRunTime</PropertyName>
+                </TableColumnItem>
+                <TableColumnItem>
+                    <PropertyName>BatteryStatus</PropertyName>
+                </TableColumnItem>
+                <TableColumnItem>
+                    <PropertyName>Status</PropertyName>
+                </TableColumnItem>
+                </TableColumnItems>
+            </TableRowEntry>
+            </TableRowEntries>
+        </TableControl>
+        </View>
+    </ViewDefinitions>
+</Configuration>
