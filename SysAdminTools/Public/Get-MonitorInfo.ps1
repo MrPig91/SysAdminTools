@@ -1,6 +1,8 @@
 <#
 .SYNOPSIS
     This will grab the serial number, monitor name, and year of manufacture of all monitors connected to a computer.
+.PARAMETER ComputerName
+    Use this paramter to specify the computer(s) you want to run the command aganist using its name or IPAddress.
 .DESCRIPTION
     This functions grabs the serial number, monitor name, and year of manufacture of all monitors
     connected to a computer.
@@ -36,7 +38,7 @@ function Get-MonitorInfo{
     [CmdletBinding()]
     param(
         [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [Alias("CN","Name")]
+        [Alias("CN","Name","IPAddress")]
         [ValidateNotNullOrEmpty()]
         [string[]]$ComputerName = $Env:COMPUTERNAME,
 
