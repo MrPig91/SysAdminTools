@@ -49,11 +49,14 @@ Function Get-LoggedInUser () {
 
                     if (!$?){
                         Write-Information "Error with quser.exe" -Tags 'Process'
-                        if ($Error[0].Exception.Message -eq ""){
-                            throw $Error[1]
+                        if ($Global:Error[0].Exception.Message -eq ""){
+                            throw $Global:Error[1]
+                        }
+                        elseif ($Global:Error[0].Exception.Message -like "No User exists*"){
+                            Write-Warning "No users logged into $computer"
                         }
                         else{
-                            throw $Error[0]
+                            throw $Global:Error[0]
                         }
                     }
     
@@ -129,11 +132,11 @@ Function Get-LoggedInUser () {
                 }
             } #try
             catch [System.Management.Automation.RemoteException]{
-                if ($_.Exception.Message -like "No User exists for *"){
-                    Write-Warning "No users logged into $computer"
-                }
-                elseif ($_.Exception.Message -like "*The RPC server is unavailable*"){
+                if ($_.Exception.Message -like "*The RPC server is unavailable*"){
                     Write-Warning "quser.exe failed on $comptuer, Ensure 'Netlogon Service (NP-In)' firewall rule is enabled"
+                    $PSCmdlet.WriteError($_)
+                }
+                else{
                     $PSCmdlet.WriteError($_)
                 }
             }
