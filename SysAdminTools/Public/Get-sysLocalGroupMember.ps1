@@ -15,7 +15,10 @@ function Get-sysLocalGroupMember{
         })]
         [Parameter(ValueFromPipeline)]
         [string[]]$GroupName,
-        [switch]$IncludeGroupsWithMembersOnly
+        [switch]$IncludeGroupsWithMembersOnly,
+        [Parameter()]
+        [ValidateSet("WsMan", "Dcom")]
+        [string]$Protocol = "WsMan"
     )
 
     Begin{
@@ -26,13 +29,12 @@ function Get-sysLocalGroupMember{
             }
             $GroupNameFilter += ")"
         }
-        Write-Host $GroupNameFilter
     } #Begin
 
     Process{
         foreach ($computer in $ComputerName){
             try{
-                $Session = New-CimConnection -ComputerName $computer -ErrorAction Stop
+                $Session = New-CimConnection -ComputerName $computer -Protocol $Protocol -ErrorAction Stop
                 $Groups = Get-CimInstance -CimSession $Session -ClassName Win32_Group -Filter "LocalAccount=True $GroupNameFilter"
                 
                 foreach ($group in $Groups){
@@ -67,9 +69,11 @@ function Get-sysLocalGroupMember{
                 $Session | Remove-CimSession
             }
             catch{
-                $Session | Remove-CimSession
+                if ($Session){
+                    $Session | Remove-CimSession
+                }
                 $PSCmdlet.WriteError($_)
             }
-        }
+        } #foreach computer
     } #Process
 }
