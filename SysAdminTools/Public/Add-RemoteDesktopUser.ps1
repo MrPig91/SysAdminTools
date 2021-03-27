@@ -34,12 +34,12 @@ function Add-RemoteDesktopUser{
             #need to change error action perference to make any errors terminating since we are not using native powershell functions
             $ErrorActionPreference = "Stop"
             [ADSI]$Account = "WinNT://$Domain/$SamAccountName,User"
-            $Account
             [ADSI]$Group = "WinNT://$ComputerName/Remote Desktop Users,Group"
             $Group.Add($Account.Path)
             [PSCustomObject]@{
                 ComputerName = $ComputerName
                 SamAccountName = $SamAccountName
+                UserDomain = $Domain
                 UserAdded = $true
             }
             $ErrorActionPreference = "Continue"
