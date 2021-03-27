@@ -1,3 +1,57 @@
+<#
+.SYNOPSIS
+    This function grabs local groups along with their members (if any) from local or remote computers.
+.DESCRIPTION
+    This function uses Win32_Group and Win32_GroupUser to grab local groups and their members form local and remote computers.
+.EXAMPLE
+    PS C:\> Get-sysLocalGroupMember -GroupName "Remote Desktop Users","RDS Remote Access Servers"
+
+    GroupName                 Member            ComputerName
+    ---------                 ------            ------------
+    Remote Desktop Users      {Everyone, mrpig} DC01
+    RDS Remote Access Servers                   DC01
+
+    This examples grabs the group and members of 2 groups specified with the GroupName parameter from the local computer.
+
+.EXAMPLE
+    PS C:\>Get-sysLocalGroupMember -IncludeGroupsWithMembersOnly
+
+    GroupName                              Member
+    ---------                              ------
+    Pre-Windows 2000 Compatible Access     {Authenticated Users}
+    Windows Authorization Access Group     {ENTERPRISE DOMAIN CONTROLLERS}
+    Administrators                         {Administrator, Enterprise Admins, Domain Admins}
+    Users                                  {INTERACTIVE, Authenticated Users, Domain Users}
+    Guests                                 {Guest, Domain Guests}
+    Remote Desktop Users                   {Everyone, mrpig}
+    IIS_IUSRS                              {IUSR}
+    Denied RODC Password Replication Group {krbtgt, Domain Controllers, Schema Admins, Enterprise Admins, Cert Publisher...
+
+    This example grabs all groups from the local computer if they have any members and ignores the one's with no members.
+.EXAMPLE
+    PS C:\>Get-sysLocalGroupMember -ComputerName $ENV:COMPUTERNAME,pancake-3 -Protocol Dcom -GroupName "Remote Desktop Users" -OutVariable groups
+
+    GroupName            Member            ComputerName
+    ---------            ------            ------------
+    Remote Desktop Users {Everyone, mrpig} DC01
+    Remote Desktop Users {mrpig, mrpig}    pancake-3
+
+    PS C:\>$groups[1].Member
+
+    Name  Domain    MemberType
+    ----  ------    ----------
+    mrpig CLEVELAND UserAccount
+    mrpig PANCAKE-3 UserAccount
+
+    This example grabs members of the "Remote Desktop Users" group from both dc01 and pancake-3 and uses the Dcom protocol since pancake-3 does not have WsMan enabled.
+    It then stores the results into the groups variable. The second command expands the Member property of pancake-3 LocalGroup object to get more info about each group member.
+.INPUTS
+    Inputs (if any)
+.OUTPUTS
+    [SysAdminTools.LocalGroupMember]
+.NOTES
+    GroupName has tab completetion, but it only grabs the local groups from the local computer and not remote ones, but generally they should be the same.
+#>
 function Get-sysLocalGroupMember{
     [CmdletBinding()]
     param(
