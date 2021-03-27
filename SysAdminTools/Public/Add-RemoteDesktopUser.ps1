@@ -4,13 +4,13 @@
 .DESCRIPTION
     Adds a user that is currently in AD to a computer's "Remote Desktop Users" group.
 .EXAMPLE
-    PS C:\WINDOWS\system32> Add-RemoteDesktopUser -ComputerName oz-jsyzdek-l -SamAccountName syrius.cleveland
+    PS C:\WINDOWS\system32> Add-RemoteDesktopUser -ComputerName pancake-3 -SamAccountName mrpig
 
     ComputerName SamAccountName   UserAdded
     ------------ --------------   ---------
-    oz-jsyzdek-l syrius.cleveland      True
+    pancake-3    mrpig            True
 
-    This examples adds the user "syrius.cleveland" to the computer OZ-JSYZDEK-L.
+    This examples adds the user "mrpig" to the computer pancake-3.
 .INPUTS
     [String] ComputerName
     [String] SamAccountName
