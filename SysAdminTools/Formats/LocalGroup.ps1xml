@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+  <ViewDefinitions>
+    <View>
+        <Name>SysAdminTools.LocalGroup</Name>
+        <ViewSelectedBy>
+            <TypeName>SysAdminTools.LocalGroup</TypeName>
+        </ViewSelectedBy>
+        <TableControl>
+            <TableHeaders>
+                <TableColumnHeader>
+                    <Label>GroupName</Label>
+                </TableColumnHeader>
+                <TableColumnHeader>
+                    <Label>Member</Label>
+                    <Width>25</Width>
+                </TableColumnHeader>
+                <TableColumnHeader>
+                    <Label>ComputerName</Label>
+                </TableColumnHeader>
+            </TableHeaders>
+            <TableRowEntries>
+            <TableRowEntry>
+                <TableColumnItems>
+                <TableColumnItem>
+                    <PropertyName>GroupName</PropertyName>
+                </TableColumnItem>
+                <TableColumnItem>
+                    <ScriptBlock>
+                        if ($_.Member){
+                            "{$($_.Member.Name -join ", ")}"
+                        }
+                    </ScriptBlock>
+                </TableColumnItem>
+                <TableColumnItem>
+                    <PropertyName>ComputerName</PropertyName>
+                </TableColumnItem>
+                </TableColumnItems>
+            </TableRowEntry>
+            </TableRowEntries>
+        </TableControl>
+        </View>
+    </ViewDefinitions>
+</Configuration>
