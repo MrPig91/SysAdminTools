@@ -17,7 +17,7 @@ $PublicFunctions = Get-ChildItem -Path $publicFuncFolderPath | Get-Content
 $FunctionsToExport = (Get-ChildItem -Path $publicFuncFolderPath | select -ExpandProperty BaseName) -join ", "
 $PrivateFunctions = Get-ChildItem -Path $privateFuncFolderPath | Get-Content
 Add-Content -Path $modulePath -Value $PublicFunctions
-Add-Content -Path $moduleName -Value $PrivateFunctions
+Add-Content -Path $modulePath -Value $PrivateFunctions
 Add-Content -Path $modulePath -Value "Export-ModuleMember -function $FunctionsToExport"
 
 $scriptsToProcess = Join-Path -Path $env:GITHUB_WORKSPACE -ChildPath "$moduleName\ScriptsToProcess"
