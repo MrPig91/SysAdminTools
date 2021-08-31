@@ -43,7 +43,8 @@ function Get-MonitorInfo{
         [string[]]$ComputerName = $Env:COMPUTERNAME,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimCmdlets.ProtocolType]$Protocol = [Microsoft.Management.Infrastructure.CimCmdlets.ProtocolType]::Wsman
+        [ValidateSet("Wsman","Dcom")]
+        $Protocol = "Wsman"
     )
 
     Begin{
