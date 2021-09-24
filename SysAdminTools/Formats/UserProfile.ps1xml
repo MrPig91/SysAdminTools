@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+  <ViewDefinitions>
+    <View>
+      <Name>SysAdminTools.UserProfile</Name>
+      <ViewSelectedBy>
+        <TypeName>SysAdminTools.UserProfile</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+            <TableColumnHeader />         
+            <TableColumnHeader />         
+            <TableColumnHeader />         
+            <TableColumnHeader />         
+            <TableColumnHeader />         
+            <TableColumnHeader>
+                <Label>Loaded</Label>
+            </TableColumnHeader>  
+            <TableColumnHeader />         
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ComputerName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>ProfileName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>AccountName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>DomainName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Special</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <Scriptblock>
+                  $Esc = [char]27
+                  $color = switch ($_.Loaded){
+                      {$_ -eq $True} {"92"}
+                      {$_ -eq $False} {"91"}
+                  }
+                  "$($Esc)[$($color)m$($_.Loaded)$($Esc)[39m"
+                </Scriptblock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>LastUseTime</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+  </ViewDefinitions>
+</Configuration>
