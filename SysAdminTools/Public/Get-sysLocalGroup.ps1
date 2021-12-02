@@ -4,7 +4,7 @@
 .DESCRIPTION
     This function uses Win32_Group and Win32_GroupUser to grab local groups and their members form local and remote computers.
 .EXAMPLE
-    PS C:\> Get-sysLocalGroupMember -GroupName "Remote Desktop Users","RDS Remote Access Servers"
+    PS C:\> Get-sysLocalGroup -GroupName "Remote Desktop Users","RDS Remote Access Servers"
 
     GroupName                 Member            ComputerName
     ---------                 ------            ------------
@@ -14,7 +14,7 @@
     This examples grabs the group and members of 2 groups specified with the GroupName parameter from the local computer.
 
 .EXAMPLE
-    PS C:\>Get-sysLocalGroupMember -IncludeGroupsWithMembersOnly
+    PS C:\>Get-sysLocalGroup -IncludeGroupsWithMembersOnly
 
     GroupName                              Member
     ---------                              ------
@@ -29,7 +29,7 @@
 
     This example grabs all groups from the local computer if they have any members and ignores the one's with no members.
 .EXAMPLE
-    PS C:\>Get-sysLocalGroupMember -ComputerName $ENV:COMPUTERNAME,pancake-3 -Protocol Dcom -GroupName "Remote Desktop Users" -OutVariable groups
+    PS C:\>Get-sysLocalGroup -ComputerName $ENV:COMPUTERNAME,pancake-3 -Protocol Dcom -GroupName "Remote Desktop Users" -OutVariable groups
 
     GroupName            Member            ComputerName
     ---------            ------            ------------
@@ -52,7 +52,7 @@
 .NOTES
     GroupName has tab completetion, but it only grabs the local groups from the local computer and not remote ones, but generally they should be the same.
 #>
-function Get-sysLocalGroupMember{
+function Get-sysLocalGroup {
     [CmdletBinding()]
     param(
         [Parameter(ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -67,7 +67,7 @@ function Get-sysLocalGroupMember{
                 [System.Management.Automation.CompletionResult]::new("`"$($_.Name)`"","$($_.Name)","ParameterValue",$ToolTip)
             }
         })]
-        [Parameter(ValueFromPipeline)]
+        [Parameter()]
         [string[]]$GroupName,
         [switch]$IncludeGroupsWithMembersOnly,
         [Parameter()]
@@ -94,7 +94,7 @@ function Get-sysLocalGroupMember{
                 foreach ($group in $Groups){
                     $GroupComponent = Get-CimInstance -CimSession $Session -ClassName Win32_GroupUser -Filter "GroupComponent=""Win32_Group.Domain='$computer',Name='$($group.Name)'"""
                     if ($IncludeGroupsWithMembersOnly){
-                        if ($GroupComponent -eq $null){
+                        if ($null -eq $GroupComponent){
                             continue
                         }
                     }
