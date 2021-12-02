@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+  <ViewDefinitions>
+    <View>
+      <Name>SysAdminTools.LoginEvent</Name>
+      <ViewSelectedBy>
+        <TypeName>SysAdminTools.LoginEvent</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+            <TableColumnHeader />         
+            <TableColumnHeader />         
+            <TableColumnHeader />         
+            <TableColumnHeader />         
+            <TableColumnHeader />                
+            <TableColumnHeader />
+            <TableColumnHeader>
+              <Label>Success</Label>
+            </TableColumnHeader>                 
+            <TableColumnHeader />                               
+            <TableColumnHeader>
+              <Label>FailureReason</Label>
+            </TableColumnHeader>                 
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ComputerName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>UserName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>DomainName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>LogonType</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>IPAddress</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>RemoteComputer</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>
+                  $Esc = [char]27
+                  $color = switch ($_.Success){
+                      {$_ -eq $True} {"92"}
+                      {$_ -eq $False} {"91"}
+                  }
+                  "$($Esc)[$($color)m$($_.Success)$($Esc)[39m"
+                </ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>TimeCreated</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>FailureReasonString</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+  </ViewDefinitions>
+</Configuration>
