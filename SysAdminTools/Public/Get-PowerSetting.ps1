@@ -83,7 +83,7 @@
 .OUTPUTS
     [spz.Utility.PowerSetting]
 .NOTES
-    The default grouping of the output is by plan name. All parameters have built-in tab completion, besdies ComputerName.
+    The default grouping of the output is by plan name. All parameters have built-in tab completion, besides ComputerName.
     The following website was a big help in creating this function.
     https://www.dhb-scripting.com/Forums/posts/t44-Line-Up-Your-Windows-Power-and-Sleep-Settings-with-PowerShell-and-WMI
 #>
