@@ -37,13 +37,12 @@ jobs:
           (Get-ChildItem).Name
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git status
           git add -A
-          git commit -m "Updated Wiki - $GITHUB_RUN_NUMBER"
+          git commit -m "Updated Wiki - $env:GITHUB_RUN_NUMBER"
       - name: Push changes to wiki repo
         uses: ad-m/github-push-action@master
         with:
-          branch: main
+          branch: master
           repository: ${{github.repository}}.wiki    # specify the wiki repo and push the update.
           github_token: ${{ secrets.GITHUB_TOKEN }}
           directory: .\markdown
