@@ -17,6 +17,8 @@
     PSCustomObject
 .NOTES
     Uses CimClass StdRegProv to grab registry information.
+.LINK
+    https://github.com/MrPig91/SysAdminTools/wiki/Get%E2%80%90PendingRebootStatus
 #>
 function Get-PendingRebootStatus {
     [CmdletBinding()]

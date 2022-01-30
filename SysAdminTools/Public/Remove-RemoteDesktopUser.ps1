@@ -12,7 +12,7 @@
 
     In this example the user account mrpig is removed from the "Remote Desktop Users" group on the computer mrpig.
 .EXAMPLE
-    PS C:\>Get-sysLocalGroupMember -ComputerName pancake-3 -GroupName "Remote Desktop Users" -Protocol Dcom
+    PS C:\>Get-sysLocalGroup -ComputerName pancake-3 -GroupName "Remote Desktop Users" -Protocol Dcom
 
     GroupName            Member         ComputerName
     ---------            ------         ------------
@@ -41,6 +41,8 @@
     [PSCustomObject]
 .NOTES
     Requires Admin.
+.LINK
+    https://github.com/MrPig91/SysAdminTools/wiki/Remove%E2%80%90RemoteDesktopUser
 #>
 function Remove-RemoteDesktopUser{
     [CmdletBinding()]
@@ -53,11 +55,12 @@ function Remove-RemoteDesktopUser{
         [ValidateSet("WsMan","Dcom")]
         [string]$Protocol
     )
+
     try{
         if (Test-Connection -ComputerName $ComputerName -Count 1 -Quiet){
             $Options = New-CimSessionOption -Protocol Dcom
             $Sesssion = New-CimSession -ComputerName $ComputerName -OperationTimeoutSec 1 -SessionOption $options -ErrorAction Stop
-            $Users = Get-sysLocalGroupMember -ComputerName $ComputerName -GroupName "Remote Desktop Users" -Protocol $Protocol
+            $Users = Get-sysLocalGroup -ComputerName $ComputerName -GroupName "Remote Desktop Users" -Protocol $Protocol
             $UserFound = $Users | where {$_.Member.Name -eq $SamAccountName -and $_.Member.Domain -eq $Domain}
             if ($UserFound){
                 $ErrorActionPreference = "Stop"
@@ -74,7 +77,7 @@ function Remove-RemoteDesktopUser{
                 
             }
             else{
-                Write-Error -Message "$SamAccountName is not a member of the Remote Desktop Users group on $ComputerName. Try using 'Get-sysLocalGroupMember -ComputerName $ComputerName -GroupName `"Remote Desktop Users`"' to find the current members of that group."`
+                Write-Error -Message "$SamAccountName is not a member of the Remote Desktop Users group on $ComputerName. Try using 'Get-sysLocalGroup -ComputerName $ComputerName -GroupName `"Remote Desktop Users`"' to find the current members of that group."`
                  -ErrorAction Stop
             }
 

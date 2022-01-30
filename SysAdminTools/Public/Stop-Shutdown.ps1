@@ -22,6 +22,8 @@
     None
 .NOTES
     Requires Admin for remote computer abort actions and shutdown.exe
+.LINK
+    https://github.com/MrPig91/SysAdminTools/wiki/Stop%E2%80%90Shutdown
 #>
 function Stop-Shutdown{
     [CmdletBinding()]

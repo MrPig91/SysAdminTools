@@ -40,6 +40,8 @@
     SysAdminTools.LoginEvent
 .NOTES
     This query can take some time on remote computers. Requires admin for remote computers. Requires Powershell version 6 or higher when using the UserName parameter.
+.LINK
+    https://github.com/MrPig91/SysAdminTools/wiki/Get%E2%80%90LoginEvent
 #>
 function Get-LoginEvent {
     [CmdletBinding()]

@@ -41,6 +41,8 @@
     The CPU_Memory prompt does create a job that runs in the background to grab the most current reading of the CPU usage. This job is removed whenver a new prompt is set.
     Three global variables are created with the use of this function prompt_FGColor,prompt_BGColor, and Prompt_Prefixblock. These are necessary to be in the global scope
     so that the prompt function can read them. 
+.LINK
+    https://github.com/MrPig91/SysAdminTools/wiki/Set%E2%80%90Prompt
 #>
 function Set-Prompt{
     [CmdletBinding(DefaultParameterSetName = "Name")]

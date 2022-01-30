@@ -35,6 +35,8 @@
     spz.Utility.UserProfile
 .NOTES
     Requires Admin if ran aganist a remote computer
+.LINK
+    https://github.com/MrPig91/SysAdminTools/wiki/Get%E2%80%90UserProfile
 #>
 function Get-UserProfile {
     [CmdletBinding()]

@@ -31,6 +31,8 @@
         Outputs a custom powershell object
 .NOTES
     Requires Admin
+.LINK
+    https://github.com/MrPig91/SysAdminTools/wiki/Get%E2%80%90LoggedInUser
 #>
 Function Get-LoggedInUser () {
     [CmdletBinding()]

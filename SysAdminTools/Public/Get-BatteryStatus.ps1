@@ -18,6 +18,8 @@
     SysAdminTools.BatteryStatus
 .NOTES
     This function uses WsMan by default and Dcom protocol if that fails.
+.LINK
+    https://github.com/MrPig91/SysAdminTools/wiki/Get%E2%80%90BatteryStatus
 #>
 function Get-BatteryStatus{
     [CmdletBinding()]

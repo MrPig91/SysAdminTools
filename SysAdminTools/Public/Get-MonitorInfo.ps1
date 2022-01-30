@@ -33,6 +33,8 @@
     PsCustomObject
 .NOTES
     Does not grab built-in monitor info.
+.LINK
+    https://github.com/MrPig91/SysAdminTools/wiki/Get%E2%80%90MonitorInfo
 #>
 function Get-MonitorInfo{
     [CmdletBinding()]

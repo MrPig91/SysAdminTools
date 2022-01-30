@@ -18,6 +18,8 @@
     [PSCUSTOMOBJECT]
 .NOTES
     Requires admin.
+.LINK
+    https://github.com/MrPig91/SysAdminTools/wiki/Add%E2%80%90RemoteDesktopUser
 #>
 function Add-RemoteDesktopUser{
     [CmdletBinding()]
