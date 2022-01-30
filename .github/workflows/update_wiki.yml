@@ -34,8 +34,10 @@ jobs:
         shell: pwsh
         run: |
           Set-Location ".\markdown"
+          (Get-ChildItem).Name
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          git status
           git add -A
           git commit -m "Updated Wiki - $GITHUB_RUN_NUMBER"
       - name: Push changes to wiki repo
