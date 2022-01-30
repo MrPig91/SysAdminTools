@@ -1,6 +1,6 @@
 Write-Host "Importing ConvertTo-MarkdownHelp function"
 Import-Module ".\base-code\build_scripts\ConvertTo-MarkdownHelp.ps1"
-$modulePublicDirecory = ".\base-code\$env:ModuleName"
+$modulePublicDirecory = ".\base-code\$env:ModuleName\Public"
 
 Write-Host "Getting files from the public folder [$modulePublicDirecory]"
 $publicFunctions = Get-ChildItem $modulePublicDirecory -File -Filter "*.ps1"
@@ -13,5 +13,5 @@ foreach ($command in $publicFunctions){
     $markdown | Out-File ".\markdown\$CommandName.md" -Force
 }
 
-$markDownFiles = Get-ChildItem ".\markdown" | Select-Object -ExpandProperty Name
+$markDownFiles = Get-ChildItem ".\markdown" | Select-Object -ExpandProperty Name | Out-String
 Write-Host $markDownFiles
