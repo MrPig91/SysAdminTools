@@ -31,7 +31,9 @@ jobs:
         run: |
           .\base-code\build_scripts\Update-GithubWiki.ps1
       - name: Commit Updates
+        shell: pwsh
         run: |
+          Set-Location ".\markdown"
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add -A
