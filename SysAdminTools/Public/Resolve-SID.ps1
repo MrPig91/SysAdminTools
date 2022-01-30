@@ -3,7 +3,7 @@
     This function will match a SID to a user account (either local or domain).
 .DESCRIPTION
     This function will match a SID to a user account that could be either a local account or domain.
-    If the account is local to the computer then you may need to specify the CompuatName for which the account would exist on.
+    If the account is local to the computer then you may need to specify the ComputerName for which the account would exist on.
     This function is mostly used as helper function when working with objects that only return SIDs and not usernames.
 .PARAMETER SID
     This is the SID string you want to resolve. Sometimes SID properties contain objects rather than strings(e.g. the output from Get-ADUser), so be careful when piping the SID property.
