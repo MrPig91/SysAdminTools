@@ -35,6 +35,8 @@
     Boolean
 .NOTES
     Requires secure string for password. I made the Output just a simple boolean value since the rest of the cmdlets that have test as the verb do the same.
+.LINK
+    https://github.com/MrPig91/SysAdminTools/wiki/Test%E2%80%90Credential
 #>
 function Test-Credential{
     [Cmdletbinding(DefaultParameterSetName = "Credentials")]

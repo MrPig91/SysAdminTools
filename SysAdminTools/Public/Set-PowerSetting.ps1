@@ -60,6 +60,8 @@
     None
 .NOTES
     Requires Admin
+.LINK
+    https://github.com/MrPig91/SysAdminTools/wiki/Set%E2%80%90PowerSetting
 #>
 function Set-PowerSetting {
     [CmdletBinding()]

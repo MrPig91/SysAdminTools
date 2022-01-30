@@ -51,6 +51,8 @@
     [SysAdminTools.LocalGroupMember]
 .NOTES
     GroupName has tab completetion, but it only grabs the local groups from the local computer and not remote ones, but generally they should be the same.
+.LINK
+    https://github.com/MrPig91/SysAdminTools/wiki/Get%E2%80%90sysLocalGroup
 #>
 function Get-sysLocalGroup {
     [CmdletBinding()]
