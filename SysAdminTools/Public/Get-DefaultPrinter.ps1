@@ -50,6 +50,8 @@
         SysAdminTool.DefaultPrinter
 .NOTES
     Uses WsMan Protocol as default and fallsback to DCOM. Grabs default printer from registry using StdRegProv wmi class in the root\default namespace
+.LINK
+    https://github.com/MrPig91/SysAdminTools/wiki/Get%E2%80%90DefaultPrinter
 #>
 function Get-DefaultPrinter{
     [cmdletbinding()]

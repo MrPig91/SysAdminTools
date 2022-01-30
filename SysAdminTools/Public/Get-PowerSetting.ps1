@@ -86,6 +86,8 @@
     The default grouping of the output is by plan name. All parameters have built-in tab completion, besides ComputerName.
     The following website was a big help in creating this function.
     https://www.dhb-scripting.com/Forums/posts/t44-Line-Up-Your-Windows-Power-and-Sleep-Settings-with-PowerShell-and-WMI
+.LINK
+    https://github.com/MrPig91/SysAdminTools/wiki/Get%E2%80%90PowerSetting
 #>
 function Get-PowerSetting {
     [CmdletBinding()]
