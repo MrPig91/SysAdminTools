@@ -9,7 +9,7 @@ foreach ($command in $publicFunctions){
     Import-Module $command.FullName
     $commandName = $command.BaseName -Replace "-",'-'
     Write-Host "Converting [$CommandName] comment help to markdown"
-    $markdown = ConvertTo-MarkdownHelp -Name $command.BaseName -ErrorAction SilentContinue
+    $markdown = ConvertTo-MarkdownHelp -Name $command.BaseName -ErrorAction SilentlyContinue
     $markdown | Out-File ".\markdown\$CommandName.md" -Force
 }
 
