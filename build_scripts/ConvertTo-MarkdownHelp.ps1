@@ -63,57 +63,11 @@ function EncodePartOfHtml {
     ($Value -replace '<', '&lt;') -replace '>', '&gt;'
 }
 
-function GetCode {
-    param (
-        $Example
-    )
-    $codeAndRemarks = (($Example | Out-String) -replace ($Example.title), '').Trim() -split "`r`n"
-
-    $code = New-Object "System.Collections.Generic.List[string]"
-    for ($i = 0; $i -lt $codeAndRemarks.Length; $i++) {
-        if ($codeAndRemarks[$i] -eq 'DESCRIPTION' -and $codeAndRemarks[$i + 1] -eq '-----------') {
-            break
-        }
-        if (1 -le $i -and $i -le 2) {
-            continue
-        }
-        $code.Add($codeAndRemarks[$i])
-    }
-
-    $code -join "`r`n"
-}
-
-function GetRemark {
-    param (
-        $Example
-    )
-    $codeAndRemarks = (($Example | Out-String) -replace ($Example.title), '').Trim() -split "`r`n"
-
-    $isSkipped = $false
-    $remark = New-Object "System.Collections.Generic.List[string]"
-    for ($i = 0; $i -lt $codeAndRemarks.Length; $i++) {
-        if (!$isSkipped -and $codeAndRemarks[$i - 2] -ne 'DESCRIPTION' -and $codeAndRemarks[$i - 1] -ne '-----------') {
-            continue
-        }
-        $isSkipped = $true
-        $remark.Add($codeAndRemarks[$i])
-    }
-
-    $remark -join "`r`n"
-}
-
 try {
-    if ($Host.UI.RawUI) {
-      $rawUI = $Host.UI.RawUI
-      $oldSize = $rawUI.BufferSize
-      $typeName = $oldSize.GetType().FullName
-      $newSize = New-Object $typeName (500, $oldSize.Height)
-      $rawUI.BufferSize = $newSize
-    }
 
     $full = Get-Help $Name -Full
 
-@"
+$mdHelp = @"
 # $($full.Name)
 ## SYNOPSIS
 $($full.Synopsis)
@@ -123,14 +77,14 @@ $((($full.syntax | Out-String) -replace "`r`n", "`r`n`r`n").Trim())
 ``````
 ## DESCRIPTION
 $(($full.description | Out-String).Trim())
-## PARAMETERS
+## PARAMETERS`n
 "@ + $(foreach ($parameter in $full.parameters.parameter) {
 @"
 ### -$($parameter.name) &lt;$($parameter.type.name)&gt;
 $(($parameter.description | Out-String).Trim())
 ``````
 $(((($parameter | Out-String).Trim() -split "`r`n")[-5..-1] | % { $_.Trim() }) -join "`r`n")
-``````
+```````n
 "@
 }) + @"
 ## INPUTS
@@ -139,23 +93,21 @@ $($full.inputTypes.inputType.type.name)
 $($full.returnValues.returnValue[0].type.name)
 ## NOTES
 $(($full.alertSet.alert | Out-String).Trim())
-## EXAMPLES
+## EXAMPLES`n
 "@ + $(foreach ($example in $full.examples.example) {
 @"
 ### $(($example.title -replace '-*', '').Trim())
 ``````powershell
-$(GetCode $example)
+$(($example.introduction.text,$example.code -JOIN " "),($example.remarks | out-string).Trim() -join "`n`n")
 ``````
-$(GetRemark $example)
+
 "@
 }) + @"
 "@
 
-} 
-finally {
-    if ($Host.UI.RawUI) {
-      $rawUI = $Host.UI.RawUI
-      $rawUI.BufferSize = $oldSize
-    }
-}
+    $mdHelp
+    } #try
+    catch{
+
+    } #catch
 }
