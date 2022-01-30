@@ -1,0 +1,43 @@
+name: Update Wiki
+on:
+  workflow_run:
+    workflows: ["build_Publish"]
+    types:
+      - completed
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  ModuleName: SysAdminTools
+
+jobs:
+  update_wiki:
+    name: Update Wiki
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: windows-latest
+    steps:
+      - name: Checkout base code
+        uses: actions/checkout@v2
+        with:
+          path: base-code
+      - name: Checkout Wiki code
+        uses: actions/checkout@v2
+        with:
+          repository: ${{github.repository}}.wiki
+          path: markdown
+      - name: Run Update Wiki
+        shell: pwsh
+        run: |
+          .\base-code\build_scripts\Update-GithubWiki.ps1
+      - name: Commit Updates
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "Updated Wiki - $GITHUB_RUN_NUMBER"
+      - name: Push changes to wiki repo
+        uses: ad-m/github-push-action@master
+        with:
+          repository: ${{github.repository}}.wiki    # specify the wiki repo and push the update.
+          github_token: ${{ secrets.GITHUB_TOKEN }}
