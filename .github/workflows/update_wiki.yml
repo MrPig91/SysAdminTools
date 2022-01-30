@@ -46,3 +46,4 @@ jobs:
           branch: main
           repository: ${{github.repository}}.wiki    # specify the wiki repo and push the update.
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          directory: .\markdown
